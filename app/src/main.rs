@@ -1,4 +1,4 @@
-use bindings::my_contract::MyContract;
+use bindings::marketplace::Marketplace;
 
 use ethers::{prelude::Middleware, providers::Provider, types::Address};
 
@@ -15,7 +15,7 @@ async fn main() -> Result<()> {
 
     let address = "0x0000000000000000000000000000000000000000".parse::<Address>()?;
 
-    let contract = MyContract::new(address, provider);
+    let contract = Marketplace::new(address, provider);
     let blk = contract.client().get_block_number().await?;
     println!("Hello, world! {}", blk);
     Ok(())

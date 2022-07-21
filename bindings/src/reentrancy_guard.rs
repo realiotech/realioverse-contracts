@@ -1,6 +1,6 @@
-pub use mycontract_mod::*;
-#[allow(clippy::too_many_arguments)]
-mod mycontract_mod {
+pub use reentrancyguard_mod::*;
+#[allow(clippy::too_many_arguments, non_camel_case_types)]
+pub mod reentrancyguard_mod {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -14,26 +14,30 @@ mod mycontract_mod {
         types::*,
     };
     use ethers::providers::Middleware;
-    #[doc = "MyContract was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
+    #[doc = "ReentrancyGuard was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
-    pub static MYCONTRACT_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
+    pub static REENTRANCYGUARD_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| serde_json::from_str("[]").expect("invalid abi"));
-    #[derive(Clone)]
-    pub struct MyContract<M>(ethers::contract::Contract<M>);
-    impl<M> std::ops::Deref for MyContract<M> {
+    pub struct ReentrancyGuard<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for ReentrancyGuard<M> {
+        fn clone(&self) -> Self {
+            ReentrancyGuard(self.0.clone())
+        }
+    }
+    impl<M> std::ops::Deref for ReentrancyGuard<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware> std::fmt::Debug for MyContract<M> {
+    impl<M: ethers::providers::Middleware> std::fmt::Debug for ReentrancyGuard<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-            f.debug_tuple(stringify!(MyContract))
+            f.debug_tuple(stringify!(ReentrancyGuard))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<'a, M: ethers::providers::Middleware> MyContract<M> {
+    impl<M: ethers::providers::Middleware> ReentrancyGuard<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -41,8 +45,12 @@ mod mycontract_mod {
             address: T,
             client: ::std::sync::Arc<M>,
         ) -> Self {
-            let contract =
-                ethers::contract::Contract::new(address.into(), MYCONTRACT_ABI.clone(), client);
+            ethers::contract::Contract::new(address.into(), REENTRANCYGUARD_ABI.clone(), client)
+                .into()
+        }
+    }
+    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for ReentrancyGuard<M> {
+        fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
         }
     }
